@@ -81,6 +81,7 @@ jobs:
       - name: Log in to DockerHub
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          docker info
 
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v0.1.6
