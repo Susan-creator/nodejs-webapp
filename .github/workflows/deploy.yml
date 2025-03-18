@@ -64,10 +64,10 @@ jobs:
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t mydockerhub/myapp:latest .
+        run: docker build -t susan778/myapp:latest .
 
       - name: Push Docker Image
-        run: docker push mydockerhub/myapp:latest
+        run: docker push susan778/myapp:latest
 
   deploy:
     needs: 
@@ -91,13 +91,13 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Pulling latest Docker image..."
-            docker pull mydockerhub/myapp:latest
+            docker pull susan778/myapp:latest
 
             echo "Stopping existing container (if running)..."
             docker stop app || true
             docker rm app || true
 
             echo "Running new container..."
-            docker run -d -p 3000:3000 --name app mydockerhub/myapp:latest
+            docker run -d -p 3000:3000 --name app susan778/myapp:latest
 
             echo "Deployment complete."
