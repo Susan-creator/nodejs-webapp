@@ -52,6 +52,23 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  build:
+    needs: sonar_scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Log in to DockerHub
+        run: |
+          echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t mydockerhub/myapp:latest .
+
+      - name: Push Docker Image
+        run: docker push mydockerhub/myapp:latest
+
   deploy:
     needs: 
       - build
@@ -64,13 +81,6 @@ jobs:
       - name: Log in to DockerHub
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-      
-      - name: Build Docker Image
-        run: docker build -t mydockerhub/myapp:latest .
-
-      - name: Push Docker Image
-        run: docker push mydockerhub/myapp:latest
 
       - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@v0.1.6
